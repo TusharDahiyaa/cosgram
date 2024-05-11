@@ -4,13 +4,13 @@ import useAuthStore from "../store/authStore";
 import usePostStore from "../store/postStore";
 import useUserProfileStore from "../store/userProfileStore";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { auth, firestore } from "../firebase/firebase";
+import { firestore } from "../firebase/firebase";
 
 export default function useGetFeedPosts() {
   const [isLoading, setIsLoading] = useState(true);
   const showToast = useShowToast();
   const authUser = useAuthStore((state: any) => state.user);
-  const { posts, setPosts } = usePostStore();
+  const { posts, setPosts } = usePostStore() as any;
   const { setUserProfile } = useUserProfileStore();
 
   useEffect(() => {

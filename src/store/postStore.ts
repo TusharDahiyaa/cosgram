@@ -1,10 +1,11 @@
 import { create } from "zustand";
 
 interface Post {
+  id: string;
   caption: string;
   imageURL: string;
-  likes: String[];
-  comments: String[];
+  likes: string[];
+  comments: string[];
   createdAt: Date;
   createdBy: string;
 }

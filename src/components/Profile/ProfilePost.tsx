@@ -22,7 +22,7 @@ import PostFooter from "../FeedPosts/PostFooter";
 import useUserProfileStore from "../../store/userProfileStore";
 import useAuthStore from "../../store/authStore";
 import useShowToast from "../../hooks/useShowToast";
-import { RefObject, useRef, useState } from "react";
+import { useState } from "react";
 import { deleteObject, ref } from "firebase/storage";
 import { firestore, storage } from "../../firebase/firebase";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
@@ -30,6 +30,7 @@ import usePostStore from "../../store/postStore";
 import Caption from "../Comment/Caption";
 
 interface Post {
+  id: string;
   caption: string;
   imageURL: string;
   likes: String[];
@@ -38,7 +39,7 @@ interface Post {
   createdBy: string;
 }
 
-export default function ProfilePost({ post }: { post: any }) {
+export default function ProfilePost({ post }: { post: Post }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const userProfile = useUserProfileStore((state: any) => state.userProfile);
   const authUser = useAuthStore((state: any) => state.user);

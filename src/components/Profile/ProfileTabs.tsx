@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import { BsBookmark, BsGrid3X3, BsSuitHeart } from "react-icons/bs";
+import { BsBookmark, BsGrid3X3 } from "react-icons/bs";
 import { CiHeart } from "react-icons/ci";
 
 export default function ProfileTabs() {

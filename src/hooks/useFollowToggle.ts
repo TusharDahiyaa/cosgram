@@ -3,7 +3,7 @@ import useAuthStore from "../store/authStore";
 import useUserProfileStore from "../store/userProfileStore";
 import useShowToast from "./useShowToast";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
-import { auth, firestore } from "../firebase/firebase";
+import { firestore } from "../firebase/firebase";
 
 export default function useFollowToggle(userId: string) {
   const [isUpdating, setIsUpdating] = useState(false);

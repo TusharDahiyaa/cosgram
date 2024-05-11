@@ -3,19 +3,6 @@ import useFollowToggle from "../../hooks/useFollowToggle";
 import useAuthStore from "../../store/authStore";
 import { Link } from "react-router-dom";
 
-interface User {
-  uid: string;
-  fullName: string;
-  username: string;
-  email: string;
-  bio: string;
-  profilePicURL: string;
-  followers: string[];
-  following: string[];
-  posts: string[];
-  createdAt: Date;
-}
-
 export default function SuggestedUser({ user, setUser }: any) {
   const { isFollowing, isUpdating, handleFollowUser } = useFollowToggle(
     user?.uid

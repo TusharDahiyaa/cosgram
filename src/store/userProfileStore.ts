@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 interface UserProfileStore {
-  userProfile: any; // Update this to the appropriate type of userProfile
-  setUserProfile: (userProfile: any) => void; // Update this to match your setUserProfile function
+  userProfile: any;
+  setUserProfile: (userProfile: any) => void;
 }
 
 const useUserProfileStore = create<UserProfileStore>((set) => ({

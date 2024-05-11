@@ -13,10 +13,16 @@ import Comment from "../Comment/Comment";
 import usePostComment from "../../hooks/usePostComment";
 import { RefObject, useEffect, useRef } from "react";
 
-const CommentsModal = ({ isOpen, onClose, post }: any) => {
+interface CommentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  post: any;
+}
+
+const CommentsModal = ({ isOpen, onClose, post }: CommentModalProps) => {
   const { handlePostComment, isCommenting } = usePostComment();
   const commentRef: RefObject<HTMLInputElement> = useRef(null);
-  const commentsContainerRef = useRef(null);
+  const commentsContainerRef: RefObject<HTMLInputElement> = useRef(null);
 
   const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

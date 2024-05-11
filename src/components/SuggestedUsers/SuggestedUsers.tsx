@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Link, Text, VStack } from "@chakra-ui/react";
+import { Box, Flex, Link, Text, VStack } from "@chakra-ui/react";
 import SugggestedHeader from "./SugggestedHeader";
 import SuggestedUser from "./SuggestedUser";
 import { BiCopyright } from "react-icons/bi";
