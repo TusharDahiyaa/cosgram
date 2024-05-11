@@ -1,6 +1,7 @@
 import {
   Avatar,
   AvatarGroup,
+  Box,
   Button,
   Flex,
   Text,
@@ -11,6 +12,7 @@ import useUserProfileStore from "../../store/userProfileStore";
 import useAuthStore from "../../store/authStore";
 import EditProfile from "./EditProfile";
 import useFollowToggle from "../../hooks/useFollowToggle";
+import SuggestedUsers from "../SuggestedUsers/SuggestedUsers";
 
 export default function ProfileHeader() {
   const { userProfile } = useUserProfileStore();
@@ -27,7 +29,7 @@ export default function ProfileHeader() {
   return (
     <Flex
       gap={{ base: 4, sm: 10 }}
-      py={5}
+      py={document.body.clientWidth < 500 ? 0 : 5}
       direction={{ base: "column", sm: "row" }}
     >
       <Flex>
@@ -47,7 +49,7 @@ export default function ProfileHeader() {
           alignItems={"center"}
           w={"full"}
         >
-          <Text fontSize={{ base: "sm", md: "lg" }}>
+          <Text fontSize={{ base: "lg", md: "xl" }}>
             {userProfile.username}
           </Text>
 
@@ -154,6 +156,9 @@ export default function ProfileHeader() {
           {userProfile.bio}
         </Text>
       </VStack>
+      <Box flex={3} mr={0} display={{ base: "block", lg: "none" }} w={"full"}>
+        <SuggestedUsers />
+      </Box>
       {isOpen && <EditProfile isOpen={isOpen} onClose={onClose} />}
     </Flex>
   );

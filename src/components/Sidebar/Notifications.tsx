@@ -1,7 +1,11 @@
-import { Box, Flex, Tooltip } from "@chakra-ui/react";
+import { Box, Link, Tooltip } from "@chakra-ui/react";
 import { NotificationsLogo } from "../../assets/constants";
+import { Link as RouterLink } from "react-router-dom";
+import useAuthStore from "../../store/authStore";
 
 const Notifications = () => {
+  const authUser = useAuthStore((state: any) => state.user);
+
   return (
     <Tooltip
       hasArrow
@@ -11,8 +15,11 @@ const Notifications = () => {
       openDelay={500}
       display={{ base: "block", md: "none" }}
     >
-      <Flex
+      <Link
+        display={"flex"}
         alignItems={"center"}
+        to={`${authUser.username}/notifications`}
+        as={RouterLink}
         gap={4}
         _hover={{ bg: "whiteAlpha.400" }}
         borderRadius={6}
@@ -22,7 +29,7 @@ const Notifications = () => {
       >
         <NotificationsLogo />
         <Box display={{ base: "none", md: "block" }}>Notifications</Box>
-      </Flex>
+      </Link>
     </Tooltip>
   );
 };

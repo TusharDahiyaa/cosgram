@@ -32,7 +32,11 @@ export default function PostHeader({ post, creatorProfile }: any) {
           <SkeletonCircle size={"10"} />
         )}
 
-        <Flex fontSize={16} fontWeight={"bold"} alignItems={"center"}>
+        <Flex
+          fontSize={{ base: 14, md: 16 }}
+          fontWeight={"bold"}
+          alignItems={"center"}
+        >
           {creatorProfile ? (
             <>
               <Link to={`/${creatorProfile.username}`}>
@@ -45,10 +49,11 @@ export default function PostHeader({ post, creatorProfile }: any) {
           <Flex
             color={"whiteAlpha.600"}
             fontWeight={"lightweight"}
-            fontSize={16}
+            fontSize={{ base: 14, md: 16 }}
             alignItems={"center"}
           >
-            <BsDot size={24} /> {formatTimeAsTimeAgo(post.createdAt)}
+            <BsDot size={24} />
+            {formatTimeAsTimeAgo(post.createdAt)}
           </Flex>
         </Flex>
       </Flex>
