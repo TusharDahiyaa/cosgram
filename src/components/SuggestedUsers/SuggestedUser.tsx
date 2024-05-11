@@ -22,7 +22,12 @@ export default function SuggestedUser({ user, setUser }: any) {
   };
 
   return (
-    <Flex alignItems={"center"} w={"full"} justifyContent={"space-between"}>
+    <Flex
+      alignItems={"center"}
+      w={"full"}
+      justifyContent={"space-between"}
+      mb={2}
+    >
       <Flex
         alignItems={"center"}
         gap={2}
