@@ -20,7 +20,7 @@ export default function SuggestedUsers() {
         py={8}
         px={6}
         gap={4}
-        display={pathname === `/${authUser.username}` ? "none" : "block"}
+        display={document.body.clientWidth < 500 ? "none" : "block"}
       >
         <SugggestedHeader />
         {suggestedUsers.length !== 0 && (
