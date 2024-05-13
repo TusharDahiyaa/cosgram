@@ -14,9 +14,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { NotificationsLogo } from "../../assets/constants";
+import useNotificationStore from "../../store/useNotificationStore";
 
 const Notifications = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { notifications, clearNotifications } = useNotificationStore();
 
   return (
     <>
@@ -48,7 +50,19 @@ const Notifications = () => {
           <ModalHeader>Notifications</ModalHeader>
           <ModalCloseButton />
           <ModalBody p={6}>
-            <Text my={2}>User_1 followed you!</Text>
+            <ul>
+              {notifications.map((notification) => (
+                <li key={notification.id}>
+                  {notification.type === "follow" && (
+                    <Text>{notification.fullName} followed you!</Text>
+                  )}
+                  {notification.type === "like" && (
+                    <Text>{notification.fullName} liked your post.</Text>
+                  )}
+                  {/* Add cases for other notification types (e.g., comments) */}
+                </li>
+              ))}
+            </ul>
           </ModalBody>
         </ModalContent>
         <ModalFooter>

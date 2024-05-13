@@ -3,6 +3,7 @@ import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { firestore } from "../firebase/firebase";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import useNotificationStore from "../store/useNotificationStore";
 
 export default function useLikePost(post: any) {
   const [isUpdating, setIsUdpating] = useState(false);
@@ -10,6 +11,7 @@ export default function useLikePost(post: any) {
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(authUser?.uid));
   const showToast = useShowToast();
+  const { addNotification } = useNotificationStore();
 
   const handleLikePost = async () => {
     if (isUpdating) return;
@@ -31,6 +33,16 @@ export default function useLikePost(post: any) {
 
       setIsLiked(!isLiked);
       isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
+
+      if (!isLiked) {
+        addNotification({
+          id: `${post.id}-${authUser.uid}`, // Unique ID based on user actions
+          type: "like",
+          fullName: authUser.fullName,
+          postId: post.id,
+          createdAt: Date.now(),
+        });
+      }
     } catch (error: any) {
       showToast({ title: "Error", description: error.message }, "error");
     } finally {
