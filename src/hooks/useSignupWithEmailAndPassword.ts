@@ -84,6 +84,7 @@ const useSignupWithEmailAndPassword = () => {
           followers: [],
           following: [],
           posts: [],
+          notifications: [],
           createdAt: new Date(),
         };
 

@@ -50,6 +50,7 @@ export default function GoogleAuth({ prefix }: { prefix: string }) {
             followers: [],
             following: [],
             posts: [],
+            notifications: [],
             createdAt: Date.now(),
           };
           await setDoc(doc(firestore, "users", newUser.user.uid), userDoc);
