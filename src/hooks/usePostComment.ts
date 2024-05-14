@@ -1,19 +1,17 @@
 import { useState } from "react";
 import useShowToast from "./useShowToast";
 import useAuthStore from "../store/authStore";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import usePostStore from "../store/postStore";
-import useNotificationStore from "../store/useNotificationStore";
+import useCreateNotifications from "./useCreateNotifications";
 
 export default function usePostComment() {
   const [isCommenting, setIsCommenting] = useState(false);
   const showToast = useShowToast();
   const authUser = useAuthStore((state: any) => state.user);
   const addComment = usePostStore((state: any) => state.addComment);
-  const addNotification = useNotificationStore(
-    (state: any) => state.addNotification
-  );
+  const { handleCreateNotification } = useCreateNotifications();
 
   const handlePostComment = async (postId: string, comment: string) => {
     if (isCommenting) return;
@@ -45,12 +43,13 @@ export default function usePostComment() {
 
       addComment(postId, newComment);
 
-      await addNotification({
-        id: `${postId}-${authUser.uid}-comment`,
+      const docRef = doc(firestore, "posts", postId);
+      const docSnap = await getDoc(docRef);
+
+      await handleCreateNotification({
+        post: docSnap.data(),
+        postId: docRef.id,
         type: "comment",
-        fullName: authUser.fullName,
-        postId,
-        createdAt: newComment.createdAt,
       });
 
       showToast(
@@ -75,4 +74,22 @@ export default function usePostComment() {
   };
 
   return { isCommenting, handlePostComment };
+}
+
+async function findPostByPostId(postId: string) {
+  try {
+    const postRef = doc(firestore, "posts", postId);
+    const postSnapshot = await getDoc(postRef);
+
+    if (postSnapshot.exists()) {
+      // Post found, return the post data
+      return postSnapshot.data();
+    } else {
+      // Post does not exist
+      return null;
+    }
+  } catch (error) {
+    console.error("Error finding post:", error);
+    throw error; // Rethrow the error for handling at the caller level
+  }
 }

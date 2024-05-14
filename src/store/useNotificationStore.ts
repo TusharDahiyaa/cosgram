@@ -1,11 +1,10 @@
 import { create } from "zustand";
 
 interface Notification {
-  id: string; // Unique ID for the notification
-  type: "follow" | "like" | "comment"; // Notification type
-  fullName: string; // User ID associated with the action
-  postId?: string; // Optional post ID for likes/comments
-  createdAt: number; // Timestamp of when the notification was created
+  type: "follow" | "like" | "unlike" | "comment";
+  fullName: string;
+  post?: any;
+  createdAt: number;
 }
 
 interface NotificationStore {
@@ -14,23 +13,16 @@ interface NotificationStore {
   clearNotifications: () => void;
 }
 
-import { addDoc, collection } from "firebase/firestore";
-import { firestore } from "../firebase/firebase";
-
 const useNotificationStore = create<NotificationStore>((set) => ({
   notifications: [],
-  addNotification: async (notification) => {
-    const notificationsRef = collection(firestore, "notifications");
-    try {
-      await addDoc(notificationsRef, notification);
-      set((state) => ({
-        notifications: [notification, ...state.notifications],
-      }));
-    } catch (error) {
-      console.error("Error adding notification to Firestore:", error);
-    }
+  addNotification: (notification) => {
+    set((state) => ({
+      notifications: [notification, ...state.notifications],
+    }));
   },
-  clearNotifications: () => set({ notifications: [] }),
+  clearNotifications: () => {
+    set({ notifications: [] });
+  },
 }));
 
 export default useNotificationStore;

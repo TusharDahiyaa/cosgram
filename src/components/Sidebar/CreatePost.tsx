@@ -175,7 +175,9 @@ function useCreatePost() {
     };
 
     try {
-      const postDocRef = await addDoc(collection(firestore, "posts"), newPost);
+      const postCollectionRef = collection(firestore, "posts");
+      const postDocRef = await addDoc(postCollectionRef, newPost);
+
       const userDocRef = doc(firestore, "users", authUser.uid);
       const imageRef = ref(storage, `/posts/${postDocRef.id}`);
 

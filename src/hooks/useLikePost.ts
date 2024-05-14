@@ -2,8 +2,18 @@ import { useState } from "react";
 import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { firestore } from "../firebase/firebase";
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
-import useNotificationStore from "../store/useNotificationStore";
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import useCreateNotifications from "./useCreateNotifications";
 
 export default function useLikePost(post: any) {
   const [isUpdating, setIsUdpating] = useState(false);
@@ -11,7 +21,7 @@ export default function useLikePost(post: any) {
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(authUser?.uid));
   const showToast = useShowToast();
-  const { addNotification } = useNotificationStore();
+  const { handleCreateNotification } = useCreateNotifications();
 
   const handleLikePost = async () => {
     if (isUpdating) return;
@@ -34,14 +44,27 @@ export default function useLikePost(post: any) {
       setIsLiked(!isLiked);
       isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
 
+      const notificationId = `${post.id}-${authUser.uid}`;
+
       if (!isLiked) {
-        addNotification({
-          id: `${post.id}-${authUser.uid}`, // Unique ID based on user actions
-          type: "like",
-          fullName: authUser.fullName,
+        await handleCreateNotification({
+          post: post,
           postId: post.id,
-          createdAt: Date.now(),
+          type: "like",
         });
+      } else {
+        // Find and delete corresponding notification for unlike action
+        const q = query(
+          collection(firestore, "notifications"),
+          where("id", "==", notificationId)
+        );
+        const notificationsSnapshot = await getDocs(q);
+
+        if (!notificationsSnapshot.empty) {
+          notificationsSnapshot.forEach(async (doc) => {
+            await deleteDoc(doc.ref);
+          });
+        }
       }
     } catch (error: any) {
       showToast({ title: "Error", description: error.message }, "error");

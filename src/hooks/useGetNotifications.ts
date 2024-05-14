@@ -1,8 +1,8 @@
 import { query, where, collection, getDocs } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 
-// Function to fetch notifications from Firestore within a given time range
-const fetchNotificationsForWeek = async () => {
+// Function to fetch notifications for a specific user from Firestore within a given time range
+const fetchUserNotificationsForWeek = async (userId: String) => {
   const currentTime = Date.now();
   const oneWeekAgo = currentTime - 7 * 24 * 60 * 60 * 1000; // Calculate timestamp for one week ago
 
@@ -10,6 +10,7 @@ const fetchNotificationsForWeek = async () => {
   const querySnapshot = await getDocs(
     query(
       notificationsRef,
+      where("userId", "==", userId), // Filter by user ID
       where("createdAt", ">=", oneWeekAgo),
       where("createdAt", "<=", currentTime)
     )
@@ -20,5 +21,7 @@ const fetchNotificationsForWeek = async () => {
     notifications.push(doc.data());
   });
 
-  return { notifications, fetchNotificationsForWeek };
+  return notifications;
 };
+
+export default fetchUserNotificationsForWeek;

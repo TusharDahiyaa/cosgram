@@ -15,10 +15,34 @@ import {
 } from "@chakra-ui/react";
 import { NotificationsLogo } from "../../assets/constants";
 import useNotificationStore from "../../store/useNotificationStore";
+import { useEffect, useState } from "react";
+import fetchUserNotificationsForWeek from "../../hooks/useGetNotifications";
+import useAuthStore from "../../store/authStore";
 
 const Notifications = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { notifications, clearNotifications } = useNotificationStore();
+  const [notifications, setNotifications] = useState([]);
+  const authUser = useAuthStore((state: any) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadNotifications = async () => {
+    setIsLoading(true);
+    try {
+      const { notifications } = await fetchUserNotificationsForWeek(
+        authUser.uid
+      );
+      console.log(notifications);
+      setNotifications(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadNotifications();
+  }, []);
 
   return (
     <>
@@ -51,17 +75,29 @@ const Notifications = () => {
           <ModalCloseButton />
           <ModalBody p={6}>
             <ul>
-              {notifications.map((notification) => (
-                <li key={notification.id}>
-                  {notification.type === "follow" && (
-                    <Text>{notification.fullName} followed you!</Text>
-                  )}
-                  {notification.type === "like" && (
-                    <Text>{notification.fullName} liked your post.</Text>
-                  )}
-                  {/* Add cases for other notification types (e.g., comments) */}
-                </li>
-              ))}
+              {notifications.length > 0 &&
+                notifications.map((notification) => (
+                  <li key={notification.createdAt}>
+                    {notification.type === "follow" && (
+                      <Text>{notification.fullName} followed you!</Text>
+                    )}
+                    {notification.type === "like" && (
+                      <Text>{notification.fullName} liked your post.</Text>
+                    )}
+                    {notification.type === "comment" && (
+                      <Text>
+                        {notification.fullName} commented on your post.
+                      </Text>
+                    )}
+                  </li>
+                ))}
+              {notifications.length === 0 && (
+                <>
+                  <Text color={"gray"}>
+                    You don&apos;t have any notifications.
+                  </Text>
+                </>
+              )}
             </ul>
           </ModalBody>
         </ModalContent>

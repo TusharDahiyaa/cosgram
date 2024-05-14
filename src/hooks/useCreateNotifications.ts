@@ -1,61 +1,84 @@
 import { useState } from "react";
 import useAuthStore from "../store/authStore";
-import useUserProfileStore from "../store/userProfileStore";
 import useShowToast from "./useShowToast";
 import {
   addDoc,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
+  getDoc,
   updateDoc,
 } from "firebase/firestore";
-import { firestore, storage } from "../firebase/firebase";
-import { ref } from "firebase/storage";
+import { firestore } from "../firebase/firebase";
+import useNotificationStore from "../store/useNotificationStore";
 
-export default function useCreateNotifications(postId: string) {
+export default function useCreateNotifications() {
   const showToast = useShowToast();
   const [isLoading, setIsLoading] = useState(false);
   const authUser = useAuthStore((state: any) => state.user);
-  const userProfile = useUserProfileStore((state: any) => state.userProfile);
+  const addNotification = useNotificationStore(
+    (state: any) => state.addNotification
+  );
 
-  const handleCreateNotification = async (
-    postId: string,
-    type: "follow" | "comment" | "like"
-  ) => {
+  interface NotificationProps {
+    post: any;
+    postId: string;
+    type: "follow" | "comment" | "like" | "unlike";
+  }
+
+  const handleCreateNotification = async ({
+    post,
+    postId,
+    type,
+  }: NotificationProps) => {
     if (isLoading) return;
-    if (!postId || !type) throw new Error("Invalid options types");
+    if (!type) {
+      throw new Error("Invalid notification type.");
+    }
     setIsLoading(true);
 
+    const userRef = await getDoc(doc(firestore, "users", post.createdBy));
+    const userProfile = userRef.data();
+
     const newNotification = {
-      type: "follow" || "comment" || "like",
+      type: type,
       fullName: authUser.fullName,
-      postId: "",
+      postId: postId,
+      userId: userProfile?.uid,
       createdAt: Date.now(),
     };
+
+    if (type === "follow") {
+      newNotification.postId = "";
+    }
 
     try {
       const notificationDocRef = await addDoc(
         collection(firestore, "notifications"),
         newNotification
       );
-      const userDocRef = doc(firestore, "users", authUser.uid);
-      const imageRef = ref(storage, `/posts/${notificationDocRef.id}`);
+      const notificationRef = doc(firestore, "users", post.createdBy);
 
-      await updateDoc(userDocRef, { posts: arrayUnion(notificationDocRef.id) });
+      await updateDoc(notificationRef, {
+        notifications: arrayUnion(notificationDocRef.id),
+      });
 
-      //   if (userProfile.uid === authUser.uid)
-      //     createPost({ ...newPost, id: postDocRef.id });
-      //   if (pathname !== "/" && userProfile.uid === authUser.uid)
-      //     addPost({ ...newPost, id: postDocRef.id });
+      // Schedule notification deletion after a week
+      setTimeout(async () => {
+        await deleteDoc(notificationDocRef);
+      }, 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
 
-      showToast(
-        { title: "Post created successfully", description: "" },
-        "success"
-      );
+      addNotification(newNotification);
     } catch (error: any) {
-      showToast({ title: "Error", description: error.message }, "error");
+      showToast(
+        { title: "Error updating notifications", description: error.message },
+        "error"
+      );
     } finally {
       setIsLoading(false);
     }
   };
+
+  return { isLoading, handleCreateNotification };
 }

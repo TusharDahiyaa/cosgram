@@ -4,7 +4,7 @@ import useUserProfileStore from "../store/userProfileStore";
 import useShowToast from "./useShowToast";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
-import useNotificationStore from "../store/useNotificationStore";
+import useCreateNotifications from "./useCreateNotifications";
 
 export default function useFollowToggle(userId: string) {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -13,7 +13,7 @@ export default function useFollowToggle(userId: string) {
   const setAuthUser = useAuthStore((state: any) => state.setUser);
   const { userProfile, setUserProfile } = useUserProfileStore();
   const showToast = useShowToast();
-  const { addNotification } = useNotificationStore();
+  const { handleCreateNotification } = useCreateNotifications();
 
   const handleFollowUser = async () => {
     setIsUpdating(true);
@@ -73,11 +73,11 @@ export default function useFollowToggle(userId: string) {
           })
         );
         setIsFollowing(true);
-        addNotification({
-          id: `${userId}-${authUser.uid}`,
+
+        await handleCreateNotification({
+          post: "",
+          postId: "",
           type: "follow",
-          fullName: authUser.fullName,
-          createdAt: Date.now(),
         });
       }
     } catch (error: any) {
