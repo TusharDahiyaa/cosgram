@@ -2,7 +2,17 @@ import { useEffect, useState } from "react";
 import useAuthStore from "../store/authStore";
 import useUserProfileStore from "../store/userProfileStore";
 import useShowToast from "./useShowToast";
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import useCreateNotifications from "./useCreateNotifications";
 
@@ -53,6 +63,7 @@ export default function useFollowToggle(userId: string) {
             ),
           })
         );
+        deleteFollowNotifications(userId);
         setIsFollowing(false);
       } else {
         //Follow user
@@ -72,13 +83,12 @@ export default function useFollowToggle(userId: string) {
             following: [...authUser.following, userId],
           })
         );
-        setIsFollowing(true);
-
         await handleCreateNotification({
           post: "",
           postId: "",
           type: "follow",
         });
+        setIsFollowing(true);
       }
     } catch (error: any) {
       showToast(
@@ -102,3 +112,22 @@ export default function useFollowToggle(userId: string) {
 
   return { isUpdating, isFollowing, handleFollowUser };
 }
+
+const deleteFollowNotifications = async (userId: string) => {
+  try {
+    const q = query(
+      collection(firestore, "notifications"),
+      where("userId", "==", userId),
+      where("type", "==", "follow")
+    );
+    const notificationsSnapshot = await getDocs(q);
+
+    if (!notificationsSnapshot.empty) {
+      notificationsSnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+    }
+  } catch (error) {
+    console.error("Error deleting follow notifications:", error);
+  }
+};

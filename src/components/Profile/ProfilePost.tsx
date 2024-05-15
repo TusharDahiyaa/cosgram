@@ -25,7 +25,16 @@ import useShowToast from "../../hooks/useShowToast";
 import { useState } from "react";
 import { deleteObject, ref } from "firebase/storage";
 import { firestore, storage } from "../../firebase/firebase";
-import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import usePostStore from "../../store/postStore";
 import Caption from "../Comment/Caption";
 
@@ -59,6 +68,7 @@ export default function ProfilePost({ post }: { post: Post }) {
       await deleteObject(imageRef);
       const userRef = doc(firestore, "users", authUser.uid);
       await deleteDoc(doc(firestore, "posts", post.id));
+      await deleteNotificationsForDeletedPost(post.id);
 
       await updateDoc(userRef, {
         posts: arrayRemove(post.id),
@@ -75,6 +85,24 @@ export default function ProfilePost({ post }: { post: Post }) {
       );
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const deleteNotificationsForDeletedPost = async (postId: string) => {
+    try {
+      const q = query(
+        collection(firestore, "notifications"),
+        where("postId", "==", postId)
+      );
+      const notificationsSnapshot = await getDocs(q);
+
+      if (!notificationsSnapshot.empty) {
+        notificationsSnapshot.forEach(async (doc) => {
+          await deleteDoc(doc.ref);
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting notifications for post:", error);
     }
   };
 

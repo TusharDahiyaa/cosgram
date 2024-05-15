@@ -44,8 +44,6 @@ export default function useLikePost(post: any) {
       setIsLiked(!isLiked);
       isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
 
-      const notificationId = `${post.id}-${authUser.uid}`;
-
       if (!isLiked) {
         await handleCreateNotification({
           post: post,
@@ -54,17 +52,7 @@ export default function useLikePost(post: any) {
         });
       } else {
         // Find and delete corresponding notification for unlike action
-        const q = query(
-          collection(firestore, "notifications"),
-          where("id", "==", notificationId)
-        );
-        const notificationsSnapshot = await getDocs(q);
-
-        if (!notificationsSnapshot.empty) {
-          notificationsSnapshot.forEach(async (doc) => {
-            await deleteDoc(doc.ref);
-          });
-        }
+        deleteLikeNotification(post.id, authUser.uid);
       }
     } catch (error: any) {
       showToast({ title: "Error", description: error.message }, "error");
@@ -75,3 +63,22 @@ export default function useLikePost(post: any) {
 
   return { isLiked, likes, handleLikePost, isUpdating };
 }
+
+const deleteLikeNotification = async (postId: string, userId: string) => {
+  try {
+    const notificationId = `${postId}-${userId}`;
+    const q = query(
+      collection(firestore, "notifications"),
+      where("id", "==", notificationId)
+    );
+    const notificationsSnapshot = await getDocs(q);
+
+    if (!notificationsSnapshot.empty) {
+      notificationsSnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+    }
+  } catch (error) {
+    console.error("Error deleting like notification:", error);
+  }
+};

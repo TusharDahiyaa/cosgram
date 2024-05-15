@@ -21,19 +21,50 @@ import { useEffect, useState } from "react";
 import fetchUserNotificationsForWeek from "../../hooks/useGetNotifications";
 import useAuthStore from "../../store/authStore";
 import formatTimeAsTimeAgo from "../../utils/formatTimeAsTimeAgo";
+import { doc, getDoc } from "firebase/firestore";
+import { firestore } from "../../firebase/firebase";
+
+interface Notification {
+  fullName: string;
+  type: string;
+  postId: string;
+  createdAt: string;
+  userId: string;
+}
 
 const Notifications = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const authUser = useAuthStore((state: any) => state.user);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageURLs, setImageURLs] = useState<{ [key: string]: string }>({});
 
   const loadNotifications = async () => {
     setIsLoading(true);
     try {
       if (!authUser) return;
-      const notifications = await fetchUserNotificationsForWeek(authUser.uid);
-      setNotifications(notifications);
+
+      const fetchedNotifications = await fetchUserNotificationsForWeek(
+        authUser.uid
+      );
+      setNotifications(fetchedNotifications);
+
+      // Fetch image URLs for each notification
+      const urls: { [key: string]: string } = {};
+      await Promise.all(
+        fetchedNotifications.map(async (notification: Notification) => {
+          if (notification.type === "like" || notification.type === "comment") {
+            const imageRef = await getDoc(
+              doc(firestore, "posts", notification.postId)
+            );
+            const imageURL = imageRef.data()?.imageURL;
+            if (imageURL) {
+              urls[notification.postId] = imageURL;
+            }
+          }
+        })
+      );
+      setImageURLs(urls);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     } finally {
@@ -43,7 +74,7 @@ const Notifications = () => {
 
   useEffect(() => {
     loadNotifications();
-  }, []);
+  }, [onOpen, isOpen]);
 
   if (isLoading) return;
 
@@ -76,15 +107,16 @@ const Notifications = () => {
         <ModalContent bg={"black"} border={"1px solid gray"} maxW={"400px"}>
           <ModalHeader>Notifications</ModalHeader>
           <ModalCloseButton />
-          <ModalBody px={4}>
-            <UnorderedList>
+          <ModalBody px={2} overflowY={"scroll"} maxH={"70lvh"}>
+            <UnorderedList px={2}>
               {notifications.length > 0 &&
                 notifications.map((notification: any) => (
                   <ListItem py={1} key={notification.createdAt}>
                     {notification.type === "follow" && (
                       <Text>{notification.fullName} followed you!</Text>
                     )}
-                    {notification.type === "like" && (
+                    {(notification.type === "like" ||
+                      notification.type === "comment") && (
                       <Flex
                         alignItems={"center"}
                         justifyContent={"space-between"}
@@ -99,7 +131,10 @@ const Notifications = () => {
                             >
                               {notification.fullName}
                             </span>{" "}
-                            liked your photo.
+                            {notification.type === "like"
+                              ? "liked"
+                              : "commented on"}{" "}
+                            your photo
                           </Text>
                           <Text as={"span"} fontSize={"sm"}>
                             {formatTimeAsTimeAgo(notification.createdAt)}
@@ -114,45 +149,7 @@ const Notifications = () => {
                           rounded={5}
                         >
                           <Image
-                            src="img3.png"
-                            alt="post Image"
-                            position={"absolute"}
-                            top={-2.5}
-                          />
-                        </Box>
-                      </Flex>
-                    )}
-                    {notification.type === "comment" && (
-                      <Flex
-                        alignItems={"center"}
-                        justifyContent={"space-between"}
-                        my={2}
-                      >
-                        <Box>
-                          <Text as={"span"} fontWeight={"bold"} mr={2}>
-                            <span
-                              onClick={() => {
-                                window.location.href = ``;
-                              }}
-                            >
-                              {notification.fullName}
-                            </span>{" "}
-                            commented on your photo.
-                          </Text>
-                          <Text as={"span"} fontSize={"sm"}>
-                            {formatTimeAsTimeAgo(notification.createdAt)}
-                          </Text>
-                        </Box>
-                        <Box
-                          w={10}
-                          h={10}
-                          overflow={"hidden"}
-                          position={"relative"}
-                          justifyContent={"center"}
-                          rounded={5}
-                        >
-                          <Image
-                            src="img3.png"
+                            src={imageURLs[notification.postId]}
                             alt="post Image"
                             position={"absolute"}
                             top={-2.5}

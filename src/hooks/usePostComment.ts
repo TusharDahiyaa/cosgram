@@ -75,21 +75,3 @@ export default function usePostComment() {
 
   return { isCommenting, handlePostComment };
 }
-
-async function findPostByPostId(postId: string) {
-  try {
-    const postRef = doc(firestore, "posts", postId);
-    const postSnapshot = await getDoc(postRef);
-
-    if (postSnapshot.exists()) {
-      // Post found, return the post data
-      return postSnapshot.data();
-    } else {
-      // Post does not exist
-      return null;
-    }
-  } catch (error) {
-    console.error("Error finding post:", error);
-    throw error; // Rethrow the error for handling at the caller level
-  }
-}
