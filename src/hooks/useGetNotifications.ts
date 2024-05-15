@@ -7,14 +7,13 @@ const fetchUserNotificationsForWeek = async (userId: String) => {
   const oneWeekAgo = currentTime - 7 * 24 * 60 * 60 * 1000; // Calculate timestamp for one week ago
 
   const notificationsRef = collection(firestore, "notifications");
-  const querySnapshot = await getDocs(
-    query(
-      notificationsRef,
-      where("userId", "==", userId), // Filter by user ID
-      where("createdAt", ">=", oneWeekAgo),
-      where("createdAt", "<=", currentTime)
-    )
+  const q = query(
+    notificationsRef,
+    where("userId", "==", userId),
+    where("createdAt", ">=", oneWeekAgo),
+    where("createdAt", "<=", currentTime)
   );
+  const querySnapshot = await getDocs(q);
 
   const notifications: any = [];
   querySnapshot.forEach((doc) => {

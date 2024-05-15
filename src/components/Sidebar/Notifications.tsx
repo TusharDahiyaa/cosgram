@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   Flex,
+  Image,
+  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,13 +13,14 @@ import {
   ModalOverlay,
   Text,
   Tooltip,
+  UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
 import { NotificationsLogo } from "../../assets/constants";
-import useNotificationStore from "../../store/useNotificationStore";
 import { useEffect, useState } from "react";
 import fetchUserNotificationsForWeek from "../../hooks/useGetNotifications";
 import useAuthStore from "../../store/authStore";
+import formatTimeAsTimeAgo from "../../utils/formatTimeAsTimeAgo";
 
 const Notifications = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -28,10 +31,8 @@ const Notifications = () => {
   const loadNotifications = async () => {
     setIsLoading(true);
     try {
-      const { notifications } = await fetchUserNotificationsForWeek(
-        authUser.uid
-      );
-      console.log(notifications);
+      if (!authUser) return;
+      const notifications = await fetchUserNotificationsForWeek(authUser.uid);
       setNotifications(notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -43,6 +44,8 @@ const Notifications = () => {
   useEffect(() => {
     loadNotifications();
   }, []);
+
+  if (isLoading) return;
 
   return (
     <>
@@ -73,23 +76,91 @@ const Notifications = () => {
         <ModalContent bg={"black"} border={"1px solid gray"} maxW={"400px"}>
           <ModalHeader>Notifications</ModalHeader>
           <ModalCloseButton />
-          <ModalBody p={6}>
-            <ul>
+          <ModalBody px={4}>
+            <UnorderedList>
               {notifications.length > 0 &&
-                notifications.map((notification) => (
-                  <li key={notification.createdAt}>
+                notifications.map((notification: any) => (
+                  <ListItem py={1} key={notification.createdAt}>
                     {notification.type === "follow" && (
                       <Text>{notification.fullName} followed you!</Text>
                     )}
                     {notification.type === "like" && (
-                      <Text>{notification.fullName} liked your post.</Text>
+                      <Flex
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                        my={2}
+                      >
+                        <Box>
+                          <Text as={"span"} fontWeight={"bold"} mr={2}>
+                            <span
+                              onClick={() => {
+                                window.location.href = ``;
+                              }}
+                            >
+                              {notification.fullName}
+                            </span>{" "}
+                            liked your photo.
+                          </Text>
+                          <Text as={"span"} fontSize={"sm"}>
+                            {formatTimeAsTimeAgo(notification.createdAt)}
+                          </Text>
+                        </Box>
+                        <Box
+                          w={10}
+                          h={10}
+                          overflow={"hidden"}
+                          position={"relative"}
+                          justifyContent={"center"}
+                          rounded={5}
+                        >
+                          <Image
+                            src="img3.png"
+                            alt="post Image"
+                            position={"absolute"}
+                            top={-2.5}
+                          />
+                        </Box>
+                      </Flex>
                     )}
                     {notification.type === "comment" && (
-                      <Text>
-                        {notification.fullName} commented on your post.
-                      </Text>
+                      <Flex
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                        my={2}
+                      >
+                        <Box>
+                          <Text as={"span"} fontWeight={"bold"} mr={2}>
+                            <span
+                              onClick={() => {
+                                window.location.href = ``;
+                              }}
+                            >
+                              {notification.fullName}
+                            </span>{" "}
+                            commented on your photo.
+                          </Text>
+                          <Text as={"span"} fontSize={"sm"}>
+                            {formatTimeAsTimeAgo(notification.createdAt)}
+                          </Text>
+                        </Box>
+                        <Box
+                          w={10}
+                          h={10}
+                          overflow={"hidden"}
+                          position={"relative"}
+                          justifyContent={"center"}
+                          rounded={5}
+                        >
+                          <Image
+                            src="img3.png"
+                            alt="post Image"
+                            position={"absolute"}
+                            top={-2.5}
+                          />
+                        </Box>
+                      </Flex>
                     )}
-                  </li>
+                  </ListItem>
                 ))}
               {notifications.length === 0 && (
                 <>
@@ -98,7 +169,7 @@ const Notifications = () => {
                   </Text>
                 </>
               )}
-            </ul>
+            </UnorderedList>
           </ModalBody>
         </ModalContent>
         <ModalFooter>
