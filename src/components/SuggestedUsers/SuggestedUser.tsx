@@ -11,14 +11,14 @@ export default function SuggestedUser({ user, setUser }: any) {
 
   const onClickFollowToggle = async () => {
     await handleFollowUser();
-    setUser({
-      ...user,
-      followers: isFollowing
-        ? user.followers.filter(
-            (follower: any) => follower.uid !== authUser.uid
-          )
-        : [...user.followers, authUser],
-    });
+    // setUser({
+    //   ...user,
+    //   followers: isFollowing
+    //     ? user.followers.filter(
+    //         (follower: any) => follower.uid !== authUser.uid
+    //       )
+    //     : [...user.followers, authUser],
+    // });
   };
 
   return (

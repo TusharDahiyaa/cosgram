@@ -13,6 +13,8 @@ import useAuthStore from "../../store/authStore";
 import EditProfile from "./EditProfile";
 import useFollowToggle from "../../hooks/useFollowToggle";
 import SuggestedUsers from "../SuggestedUsers/SuggestedUsers";
+import Followers from "./Followers";
+import Following from "./Following";
 
 export default function ProfileHeader() {
   const { userProfile } = useUserProfileStore();
@@ -21,10 +23,24 @@ export default function ProfileHeader() {
     authUser && authUser.username === userProfile.username;
   const visitAnotherProfileAndAuthCheck =
     authUser && authUser.username !== userProfile.username;
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: profileOpen,
+    onOpen: onProfileOpen,
+    onClose: profileClose,
+  } = useDisclosure();
   const { isFollowing, isUpdating, handleFollowUser } = useFollowToggle(
     userProfile?.uid
   );
+  const {
+    isOpen: isFollowerOpen,
+    onOpen: onFollowerOpen,
+    onClose: onFollowerClose,
+  } = useDisclosure();
+  const {
+    isOpen: isFollowingOpen,
+    onOpen: onFollowingOpen,
+    onClose: onFollowingClose,
+  } = useDisclosure();
 
   return (
     <Flex
@@ -60,7 +76,7 @@ export default function ProfileHeader() {
                 color={"black"}
                 _hover={{ bg: "whiteAlpha.800", color: "black" }}
                 size={{ base: "xs", md: "sm" }}
-                onClick={onOpen}
+                onClick={onProfileOpen}
               >
                 Edit Profile
               </Button>
@@ -101,7 +117,7 @@ export default function ProfileHeader() {
                 color={"black"}
                 _hover={{ bg: "whiteAlpha.800", color: "black" }}
                 size={{ base: "xs", md: "sm" }}
-                onClick={onOpen}
+                onClick={onProfileOpen}
               >
                 Edit Profile
               </Button>
@@ -134,13 +150,23 @@ export default function ProfileHeader() {
             </Text>
             Posts
           </Text>
-          <Text fontSize={{ base: "sm", md: "md" }} textAlign={"center"}>
+          <Text
+            fontSize={{ base: "sm", md: "md" }}
+            textAlign={"center"}
+            onClick={onFollowerOpen}
+            cursor={"pointer"}
+          >
             <Text as={"span"} fontWeight={"bold"} mr={1}>
               {userProfile.followers.length}
             </Text>
             Followers
           </Text>
-          <Text fontSize={{ base: "sm", md: "md" }} textAlign={"center"}>
+          <Text
+            fontSize={{ base: "sm", md: "md" }}
+            textAlign={"center"}
+            onClick={onFollowingOpen}
+            cursor={"pointer"}
+          >
             <Text as={"span"} fontWeight={"bold"} mr={1}>
               {userProfile.following.length}
             </Text>
@@ -159,7 +185,23 @@ export default function ProfileHeader() {
       <Box flex={3} mr={0} display={{ base: "block", lg: "none" }} w={"full"}>
         <SuggestedUsers />
       </Box>
-      {isOpen && <EditProfile isOpen={isOpen} onClose={onClose} />}
+      {profileOpen && (
+        <EditProfile isOpen={profileOpen} onClose={profileClose} />
+      )}
+      {isFollowerOpen && (
+        <Followers
+          isOpen={isFollowerOpen}
+          onClose={onFollowerClose}
+          userProfile={userProfile}
+        />
+      )}
+      {isFollowingOpen && (
+        <Following
+          isOpen={isFollowingOpen}
+          onClose={onFollowingClose}
+          userProfile={userProfile}
+        />
+      )}
     </Flex>
   );
 }

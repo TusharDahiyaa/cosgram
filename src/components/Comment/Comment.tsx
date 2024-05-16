@@ -1,4 +1,11 @@
-import { Avatar, Flex, Skeleton, SkeletonCircle, Text } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Flex,
+  Skeleton,
+  SkeletonCircle,
+  Text,
+} from "@chakra-ui/react";
 import useGetUserProfileById from "../../hooks/useGetUserProfileById";
 import { Link } from "react-router-dom";
 import formatTimeAsTimeAgo from "../../utils/formatTimeAsTimeAgo";
@@ -13,14 +20,14 @@ const Comment = ({ comment }: any) => {
         <Avatar src={userProfile.profilePicURL} size={"sm"} />
       </Link>
       <Flex direction={"column"}>
-        <Flex gap={1} my={"auto"}>
-          <Link to={`/${userProfile.username}`}>
-            <Text fontWeight={"bold"} fontSize={12}>
-              {userProfile.username}
-            </Text>
-          </Link>
-          <Text fontSize={14}>{comment.comment}</Text>
-        </Flex>
+        <Box gap={1} my={"auto"}>
+          <Text as={"span"} fontWeight={"bold"} fontSize={12} mr={1}>
+            <Link to={`/${userProfile.username}`}>{userProfile.username}</Link>
+          </Text>
+          <Text as={"span"} fontSize={14}>
+            {comment.comment}
+          </Text>
+        </Box>
         <Text fontSize={12} color={"gray"}>
           {formatTimeAsTimeAgo(comment.createdAt)}
         </Text>

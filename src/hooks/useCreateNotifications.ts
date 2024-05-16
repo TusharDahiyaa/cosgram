@@ -23,12 +23,14 @@ export default function useCreateNotifications() {
 
   interface NotificationProps {
     post: any;
+    userToFollow: string;
     postId: string;
     type: "follow" | "comment" | "like" | "unlike";
   }
 
   const handleCreateNotification = async ({
     post,
+    userToFollow,
     postId,
     type,
   }: NotificationProps) => {
@@ -37,12 +39,18 @@ export default function useCreateNotifications() {
       throw new Error("Invalid notification type.");
     }
     setIsLoading(true);
-
-    const userRef = await getDoc(doc(firestore, "users", post.createdBy));
-    const userProfile = userRef.data();
+    let userProfile = null;
+    if (post !== "") {
+      const userRef = await getDoc(doc(firestore, "users", post.createdBy));
+      userProfile = userRef.data();
+    } else {
+      const userRef = await getDoc(doc(firestore, "users", userToFollow));
+      userProfile = userRef.data();
+    }
 
     const newNotification = {
       type: type,
+      userWhoTookAction: authUser.username,
       fullName: authUser.fullName,
       postId: postId,
       userId: userProfile?.uid,
@@ -58,16 +66,22 @@ export default function useCreateNotifications() {
         collection(firestore, "notifications"),
         newNotification
       );
-      const notificationRef = doc(firestore, "users", post.createdBy);
-
-      await updateDoc(notificationRef, {
-        notifications: arrayUnion(notificationDocRef.id),
-      });
+      if (post !== "") {
+        const notificationRef = doc(firestore, "users", post.createdBy);
+        await updateDoc(notificationRef, {
+          notifications: arrayUnion(notificationDocRef.id),
+        });
+      } else {
+        const notificationRef = doc(firestore, "users", userToFollow);
+        await updateDoc(notificationRef, {
+          notifications: arrayUnion(notificationDocRef.id),
+        });
+      }
 
       // Schedule notification deletion after a week
       setTimeout(async () => {
         await deleteDoc(notificationDocRef);
-      }, 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
+      }, 1 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
 
       addNotification(newNotification);
     } catch (error: any) {

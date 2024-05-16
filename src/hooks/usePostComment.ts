@@ -48,6 +48,7 @@ export default function usePostComment() {
 
       await handleCreateNotification({
         post: docSnap.data(),
+        userToFollow: "",
         postId: docRef.id,
         type: "comment",
       });

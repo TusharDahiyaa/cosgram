@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   Flex,
@@ -28,7 +29,7 @@ interface Notification {
   fullName: string;
   type: string;
   postId: string;
-  createdAt: string;
+  createdAt: number;
   userId: string;
 }
 
@@ -99,12 +100,24 @@ const Notifications = () => {
           onClick={onOpen}
         >
           <NotificationsLogo />
-          <Box display={{ base: "none", md: "block" }}>Notifications</Box>
+          <Box display={{ base: "none", md: "block" }}>
+            Notifications
+            <Badge
+              mx={2}
+              px={2}
+              py={1}
+              fontSize={16}
+              colorScheme="blue"
+              borderRadius={"full"}
+            >
+              {notifications.length}
+            </Badge>
+          </Box>
         </Flex>
       </Tooltip>
       <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom">
         <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
-        <ModalContent bg={"black"} border={"1px solid gray"} maxW={"400px"}>
+        <ModalContent bg={"black"} border={"1px solid gray"} maxW={"500px"}>
           <ModalHeader>Notifications</ModalHeader>
           <ModalCloseButton />
           <ModalBody px={2} overflowY={"scroll"} maxH={"70lvh"}>
@@ -113,7 +126,26 @@ const Notifications = () => {
                 notifications.map((notification: any) => (
                   <ListItem py={1} key={notification.createdAt}>
                     {notification.type === "follow" && (
-                      <Text>{notification.fullName} followed you!</Text>
+                      <Box my={2}>
+                        <Text
+                          as={"span"}
+                          fontWeight={"bold"}
+                          mr={2}
+                          cursor={"pointer"}
+                        >
+                          <span
+                            onClick={() => {
+                              window.location.href = `/${notification.userWhoTookAction}`;
+                            }}
+                          >
+                            {notification.fullName}
+                          </span>{" "}
+                          started following you.
+                        </Text>
+                        <Text as={"span"} fontWeight={"normal"} fontSize={"sm"}>
+                          {formatTimeAsTimeAgo(notification.createdAt)}
+                        </Text>
+                      </Box>
                     )}
                     {(notification.type === "like" ||
                       notification.type === "comment") && (
@@ -122,11 +154,16 @@ const Notifications = () => {
                         justifyContent={"space-between"}
                         my={2}
                       >
-                        <Box>
-                          <Text as={"span"} fontWeight={"bold"} mr={2}>
+                        <Box mr={1}>
+                          <Text
+                            as={"span"}
+                            fontWeight={"bold"}
+                            mr={1}
+                            cursor={"pointer"}
+                          >
                             <span
                               onClick={() => {
-                                window.location.href = ``;
+                                window.location.href = `/${notification.userWhoTookAction}`;
                               }}
                             >
                               {notification.fullName}
@@ -134,9 +171,13 @@ const Notifications = () => {
                             {notification.type === "like"
                               ? "liked"
                               : "commented on"}{" "}
-                            your photo
+                            your photo.{" "}
                           </Text>
-                          <Text as={"span"} fontSize={"sm"}>
+                          <Text
+                            as={"span"}
+                            fontWeight={"normal"}
+                            fontSize={"sm"}
+                          >
                             {formatTimeAsTimeAgo(notification.createdAt)}
                           </Text>
                         </Box>
@@ -161,7 +202,7 @@ const Notifications = () => {
                 ))}
               {notifications.length === 0 && (
                 <>
-                  <Text color={"gray"}>
+                  <Text color={"gray"} textAlign={"center"} my={10}>
                     You don&apos;t have any notifications.
                   </Text>
                 </>

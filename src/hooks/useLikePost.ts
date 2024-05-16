@@ -47,6 +47,7 @@ export default function useLikePost(post: any) {
       if (!isLiked) {
         await handleCreateNotification({
           post: post,
+          userToFollow: "",
           postId: post.id,
           type: "like",
         });

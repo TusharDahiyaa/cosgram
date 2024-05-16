@@ -85,6 +85,7 @@ export default function useFollowToggle(userId: string) {
         );
         await handleCreateNotification({
           post: "",
+          userToFollow: userId,
           postId: "",
           type: "follow",
         });
