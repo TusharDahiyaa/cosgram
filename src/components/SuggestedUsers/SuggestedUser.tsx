@@ -3,7 +3,7 @@ import useFollowToggle from "../../hooks/useFollowToggle";
 import useAuthStore from "../../store/authStore";
 import { Link } from "react-router-dom";
 
-export default function SuggestedUser({ user, setUser }: any) {
+export default function SuggestedUser({ user }: any) {
   const { isFollowing, isUpdating, handleFollowUser } = useFollowToggle(
     user?.uid
   );
