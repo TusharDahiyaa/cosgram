@@ -74,7 +74,7 @@ export default function useFollowToggle(userId: string) {
         if (userProfile)
           setUserProfile({
             ...userProfile,
-            following: [...userProfile.following, authUser.uid],
+            followers: [...userProfile.followers, authUser.uid],
           });
         localStorage.setItem(
           "user_info",
