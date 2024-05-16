@@ -3,7 +3,14 @@ import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { firestore, storage } from "../firebase/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import useUserProfileStore from "../store/userProfileStore";
 
 interface inputsProps {
@@ -39,6 +46,22 @@ export default function useEditProfile() {
           ref(storage, `usersProfilePictures/${authUser.uid}`)
         );
       }
+
+      const q = query(
+        collection(firestore, "notifications"),
+        where("userWhoTookAction", "==", authUser.username)
+      );
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // Update each notification document
+        for (const doc of querySnapshot.docs) {
+          await updateDoc(doc.ref, {
+            userWhoTookAction: inputs.username,
+          });
+        }
+      }
+
       const updatedUser = {
         ...authUser,
         fullName: inputs.fullName || authUser.fullName,
