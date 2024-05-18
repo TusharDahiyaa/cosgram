@@ -13,6 +13,7 @@ import {
   Divider,
   VStack,
   Button,
+  Box,
 } from "@chakra-ui/react";
 import { AiFillHeart } from "react-icons/ai";
 import { FaComment } from "react-icons/fa";
@@ -163,96 +164,127 @@ export default function ProfilePost({ post }: { post: Post }) {
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
-          <ModalBody bg={"blackAlpha.800"} pb={5}>
-            <Flex
-              gap={2}
-              w={{ base: "90%", sm: "70%", md: "full" }}
-              mx={"auto"}
-              maxH={"90vh"}
-              minH={"50vh"}
-            >
+          {document.body.clientWidth > 500 ? (
+            <ModalBody bg={"blackAlpha.800"} pb={5}>
               <Flex
-                borderRadius={4}
-                overflow={"hidden"}
-                border={"1px solid"}
-                borderColor={"whiteAlpha.300"}
-                flex={1.5}
-                alignItems={"center"}
-                justifyContent={"center"}
+                gap={2}
+                w={{ base: "90%", sm: "70%", md: "full" }}
+                mx={"auto"}
+                maxH={"90vh"}
+                minH={"50vh"}
               >
-                <Image
-                  src={post.imageURL}
-                  alt="profile pic"
-                  objectFit="cover"
-                  boxSize="full"
-                />
-              </Flex>
-              <Flex
-                flex={1}
-                flexDir={"column"}
-                px={5}
-                display={{ base: "none", md: "flex" }}
-              >
-                <Flex alignItems={"center"} justifyContent={"space-between"}>
-                  <Flex
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                    gap={4}
-                    my={"auto"}
-                  >
-                    <Avatar
-                      src={userProfile.profilePicURL}
-                      size={"sm"}
-                      name={userProfile.fullName}
-                    />
-                    <Text fontWeight={"bold"} fontSize={14}>
-                      {userProfile.username}
-                    </Text>
-                  </Flex>
-                  {authUser?.uid === userProfile.uid && (
-                    <Button
-                      size={"sm"}
-                      bg={"transparent"}
-                      _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
-                      borderRadius={4}
-                      p={1}
-                      onClick={handleDeletePost}
-                      isLoading={isDeleting}
-                    >
-                      <MdDelete size={20} cursor={"pointer"} />
-                    </Button>
-                  )}
+                <Flex
+                  borderRadius={4}
+                  overflow={"hidden"}
+                  border={"1px solid"}
+                  borderColor={"whiteAlpha.300"}
+                  flex={1.5}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <Image
+                    src={post.imageURL}
+                    alt="profile pic"
+                    objectFit="cover"
+                    boxSize="full"
+                  />
                 </Flex>
-                <Divider my={4} bg={"gray.500"} />
-                <Text mb={4}>
-                  {/* CAPTIONS */}
-                  {post.caption && <Caption post={post} />}
-                </Text>
-                {post.comments.length > 0 && (
-                  <VStack
-                    w={"full"}
-                    alignItems={"start"}
-                    maxH={"350px"}
-                    overflowY={"auto"}
-                    className="commentsContainer"
-                    borderTop={"1px solid"}
-                    borderColor={"whiteAlpha.300"}
-                    pt={2}
-                  >
-                    {/* COMMENTS */}
-                    {post.comments.map((comment: any, index: number) => (
-                      <Comment key={index} comment={comment} />
-                    ))}
-                  </VStack>
-                )}
-                <PostFooter
-                  post={post}
-                  username={authUser?.username}
-                  isProfilePage={true}
-                />
+                <Flex
+                  flex={1}
+                  flexDir={"column"}
+                  px={5}
+                  display={{ base: "none", md: "flex" }}
+                >
+                  <Flex alignItems={"center"} justifyContent={"space-between"}>
+                    <Flex
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                      gap={4}
+                      my={"auto"}
+                    >
+                      <Avatar
+                        src={userProfile.profilePicURL}
+                        size={"sm"}
+                        name={userProfile.fullName}
+                      />
+                      <Text fontWeight={"bold"} fontSize={14}>
+                        {userProfile.username}
+                      </Text>
+                    </Flex>
+                    {authUser?.uid === userProfile.uid && (
+                      <Button
+                        size={"sm"}
+                        bg={"transparent"}
+                        _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                        borderRadius={4}
+                        p={1}
+                        onClick={handleDeletePost}
+                        isLoading={isDeleting}
+                      >
+                        <MdDelete size={20} cursor={"pointer"} />
+                      </Button>
+                    )}
+                  </Flex>
+                  <Divider my={4} bg={"gray.500"} />
+                  <Text mb={4}>
+                    {/* CAPTIONS */}
+                    {post.caption && <Caption post={post} />}
+                  </Text>
+                  {post.comments.length > 0 && (
+                    <VStack
+                      w={"full"}
+                      alignItems={"start"}
+                      maxH={"350px"}
+                      overflowY={"auto"}
+                      className="commentsContainer"
+                      borderTop={"1px solid"}
+                      borderColor={"whiteAlpha.300"}
+                      pt={2}
+                    >
+                      {/* COMMENTS */}
+                      {post.comments.map((comment: any, index: number) => (
+                        <Comment key={index} comment={comment} />
+                      ))}
+                    </VStack>
+                  )}
+                  <PostFooter
+                    post={post}
+                    username={authUser?.username}
+                    isProfilePage={true}
+                  />
+                </Flex>
               </Flex>
-            </Flex>
-          </ModalBody>
+            </ModalBody>
+          ) : (
+            <ModalBody bg={"blackAlpha.800"} pb={5} h={"full"}>
+              {authUser?.uid === userProfile.uid && (
+                <Button
+                  size={"sm"}
+                  bg={"transparent"}
+                  _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                  borderRadius={4}
+                  p={1}
+                  onClick={handleDeletePost}
+                  isLoading={isDeleting}
+                >
+                  <MdDelete size={20} cursor={"pointer"} />
+                </Button>
+              )}
+              <Box my={10}>
+                <Box my={2} borderRadius={4} overflow={"hidden"}>
+                  <Image
+                    src={post.imageURL}
+                    alt={post.caption}
+                    h={"lg"}
+                    w="full"
+                    height={"full"}
+                    objectFit={"cover"}
+                  />
+                </Box>
+                <PostFooter post={post} creatorProfile={userProfile} />
+              </Box>
+            </ModalBody>
+          )}
         </ModalContent>
       </Modal>
     </>

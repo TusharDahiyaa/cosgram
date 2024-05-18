@@ -110,7 +110,7 @@ const Notifications = () => {
               colorScheme="blue"
               borderRadius={"full"}
             >
-              {notifications.length}
+              {notifications?.length}
             </Badge>
           </Box>
         </Flex>
