@@ -42,10 +42,17 @@ const FeedPosts = () => {
         posts.map((post: any) => <FeedPost post={post} key={post.id} />)}
       {!isLoading && posts.length === 0 && (
         <>
-          <Text fontSize={"lg"} color={"red.400"}>
+          <Text fontSize={"xl"} color={"blue.300"}>
             Oh no!!. Looks like you don&apos;t have any friends.
           </Text>
-          <Text color={"red.400"}>Stop coding and go follow some!</Text>
+          <Text color={"blue.300"} fontSize={"lg"}>
+            Stop being boring and go follow some people!
+          </Text>
+
+          <Text my={10}>
+            PS: If you are browsing on your mobile, go to our profile to follow
+            some people.
+          </Text>
         </>
       )}
     </Container>
