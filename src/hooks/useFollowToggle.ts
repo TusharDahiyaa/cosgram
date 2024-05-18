@@ -67,15 +67,22 @@ export default function useFollowToggle(userId: string) {
         setIsFollowing(false);
       } else {
         //Follow user
-        setAuthUser({
-          ...authUser,
-          following: [...authUser.following, userId],
-        });
-        if (userProfile)
+        if (authUser && authUser.uid === userProfile.uid) {
+          setAuthUser({
+            ...authUser,
+            following: [...authUser.following, userId],
+          });
+          setUserProfile({
+            ...userProfile,
+            following: [...userProfile.following, authUser.uid],
+          });
+        }
+        if (userProfile && authUser.uid !== userProfile.uid)
           setUserProfile({
             ...userProfile,
             followers: [...userProfile.followers, authUser.uid],
           });
+
         localStorage.setItem(
           "user_info",
           JSON.stringify({
