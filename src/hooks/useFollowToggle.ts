@@ -67,7 +67,7 @@ export default function useFollowToggle(userId: string) {
         setIsFollowing(false);
       } else {
         //Follow user
-        if (authUser && authUser.uid === userProfile.uid) {
+        if (authUser || authUser.uid === userProfile.uid) {
           setAuthUser({
             ...authUser,
             following: [...authUser.following, userId],
