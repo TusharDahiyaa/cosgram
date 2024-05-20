@@ -9,7 +9,12 @@ export default function FeedPost({ post }: any) {
   return (
     <Box my={10}>
       <PostHeader post={post} creatorProfile={userProfile} />
-      <Box my={2} borderRadius={4} overflow={"hidden"}>
+      <Box
+        mb={2}
+        overflow={"hidden"}
+        bgGradient="linear-gradient(to right, #800f2f, #871031, #8d1134, #941136, #9b1239, #a1133b, #a7133d, #ad143f, #b41542, #bb1644, #c21747, #c9184a)"
+        p={1}
+      >
         <Image
           src={post.imageURL}
           alt={post.caption}

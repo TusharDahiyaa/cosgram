@@ -45,6 +45,7 @@ export default function GoogleAuth({ prefix }: { prefix: string }) {
             email: newUser.user.email,
             username: newUser.user.email?.split("@")[0],
             fullName: newUser.user.displayName,
+            fullName_lowercase: newUser.user.displayName?.toLowerCase(),
             bio: "",
             profilePicURL: newUser.user.photoURL,
             followers: [],

@@ -84,7 +84,10 @@ const Search = () => {
                 </Button>
               </Flex>
             </form>
-            {user && <SuggestedUser user={user} setUser={setUser} />}
+            {user &&
+              user.map((user: any, index: number) => (
+                <SuggestedUser key={index} user={user} setUser={setUser} />
+              ))}
           </ModalBody>
         </ModalContent>
         <ModalFooter>

@@ -102,16 +102,18 @@ const Notifications = () => {
           <NotificationsLogo />
           <Box display={{ base: "none", md: "block" }}>
             Notifications
-            <Badge
-              mx={2}
-              px={2}
-              py={1}
-              fontSize={16}
-              colorScheme="blue"
-              borderRadius={"full"}
-            >
-              {notifications?.length}
-            </Badge>
+            {notifications.length > 0 && (
+              <Badge
+                mx={2}
+                px={2}
+                py={1}
+                fontSize={16}
+                colorScheme="blue"
+                borderRadius={"full"}
+              >
+                {notifications?.length}
+              </Badge>
+            )}
           </Box>
         </Flex>
       </Tooltip>

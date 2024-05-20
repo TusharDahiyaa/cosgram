@@ -5,16 +5,16 @@ import { firestore } from "../firebase/firebase";
 
 export default function useSearchUser() {
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any[]>([]);
   const showToast = useShowToast();
 
-  const getSearchedUserProfile = async (username: string) => {
+  const getSearchedUserProfile = async (fullName_lower: string) => {
     setIsLoading(true);
-    setUser(null);
+    setUser([]);
     try {
       const q = query(
         collection(firestore, "users"),
-        where("username", "==", username)
+        where("fullName_lowercase", "==", fullName_lower.toLowerCase())
       );
       const querySnapshot = await getDocs(q);
 
@@ -25,12 +25,11 @@ export default function useSearchUser() {
         );
       }
 
-      querySnapshot.forEach((doc) => {
-        setUser(doc.data());
-      });
+      const users = querySnapshot.docs.map((doc) => doc.data());
+      setUser(users);
     } catch (error: any) {
       showToast({ title: "Error", description: error.message }, "error");
-      setUser(null);
+      setUser([]);
     } finally {
       setIsLoading(false);
     }

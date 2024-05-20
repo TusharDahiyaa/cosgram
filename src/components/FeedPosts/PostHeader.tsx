@@ -17,14 +17,21 @@ export default function PostHeader({ post, creatorProfile }: any) {
   );
 
   return (
-    <Flex alignItems={"center"} justifyContent={"space-between"} w={"full"}>
-      <Flex alignItems={"center"} gap={4}>
+    <Flex
+      alignItems={"center"}
+      justifyContent={"space-between"}
+      w={"full"}
+      bgGradient="linear-gradient(to right, #800f2f, #871031, #8d1134, #941136, #9b1239, #a1133b, #a7133d, #ad143f, #b41542, #bb1644, #c21747, #c9184a)"
+      p={1}
+      roundedTop={10}
+    >
+      <Flex alignItems={"center"} gap={{ base: 1, md: 4 }}>
         {creatorProfile ? (
           <Link to={`/${creatorProfile.username}`}>
             <Avatar
               src={creatorProfile.profilePicURL}
               size={"sm"}
-              border={"1px solid"}
+              border={"2px solid"}
               borderColor={"whiteAlpha.400"}
             />
           </Link>
@@ -33,7 +40,7 @@ export default function PostHeader({ post, creatorProfile }: any) {
         )}
 
         <Flex
-          fontSize={{ base: 14, md: 16 }}
+          fontSize={{ base: 12, md: 15 }}
           fontWeight={"bold"}
           alignItems={"center"}
         >
@@ -47,9 +54,9 @@ export default function PostHeader({ post, creatorProfile }: any) {
             <Skeleton w={"100px"} h={"10px"} />
           )}
           <Flex
-            color={"whiteAlpha.600"}
+            color={"whiteAlpha.900"}
             fontWeight={"lightweight"}
-            fontSize={{ base: 14, md: 16 }}
+            fontSize={{ base: 12, md: 15 }}
             alignItems={"center"}
           >
             <BsDot size={24} />
@@ -62,7 +69,7 @@ export default function PostHeader({ post, creatorProfile }: any) {
           size={"xs"}
           bg={"transparent"}
           fontSize={12}
-          color={"blue.500"}
+          color={"whiteAlpha.800"}
           fontWeight={"bold"}
           _hover={{
             color: "white",
