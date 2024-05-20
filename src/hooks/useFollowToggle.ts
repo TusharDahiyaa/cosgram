@@ -72,16 +72,22 @@ export default function useFollowToggle(userId: string) {
             ...authUser,
             following: [...authUser.following, userId],
           });
+          console.log("reached after setAuthUser inside authUser if block");
+          if (!userProfile.followers) userProfile.followers = [];
+          if (!userProfile.following) userProfile.following = [];
+
           setUserProfile({
             ...userProfile,
-            following: [...userProfile.following, authUser.uid],
+            following: [...userProfile?.following, authUser.uid],
           });
         }
         if (userProfile && authUser.uid !== userProfile.uid)
-          setUserProfile({
-            ...userProfile,
-            followers: [...userProfile.followers, authUser.uid],
-          });
+          console.log("reached inside userProfile if block");
+
+        setUserProfile({
+          ...userProfile,
+          followers: [...userProfile.followers, authUser.uid],
+        });
 
         localStorage.setItem(
           "user_info",

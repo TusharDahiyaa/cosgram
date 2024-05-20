@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import useGetUserProfileById from "../../hooks/useGetUserProfileById";
 
 export default function FollowingUser({ userId }: { userId: string }) {
@@ -15,9 +15,9 @@ export default function FollowingUser({ userId }: { userId: string }) {
         window.location.href = `/${userProfile.username}`;
       }}
     >
-      <Image
+      <Avatar
         src={userProfile?.profilePicURL}
-        alt={userProfile?.username}
+        name={userProfile?.username}
         borderRadius={"full"}
         boxSize={12}
       />
