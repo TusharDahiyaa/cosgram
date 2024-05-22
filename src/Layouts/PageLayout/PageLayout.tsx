@@ -19,7 +19,7 @@ export default function PageLayout({ children }: any) {
     <Flex direction={canRenderNavbar ? "column" : "row"}>
       {/* Sidebar on left */}
       {canRenderSidebar ? (
-        <Box w={{ base: "70px", md: "240px" }}>
+        <Box w={{ base: "50px", md: "240px" }}>
           <Sidebar />
         </Box>
       ) : null}

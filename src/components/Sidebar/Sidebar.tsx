@@ -9,14 +9,14 @@ export default function Sidebar() {
 
   return (
     <Box
-      height={"100vh"}
+      height={"100lvh"}
       borderRight={"1px solid"}
       borderColor={"whiteAlpha.300"}
       py={8}
       position={"sticky"}
       top={0}
       left={0}
-      px={{ base: 2, md: 4 }}
+      px={{ base: 1, md: 4 }}
     >
       <Flex direction={"column"} gap={10} w={"full"} h={"full"}>
         <Link
